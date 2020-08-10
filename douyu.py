@@ -25,9 +25,12 @@ def get_homejs(rid):
     homejs = ''
     pattern = r'(function ub9.*)[\s\S](var.*)'
     result = re.findall(pattern, response.text, re.I)
+    screenshotPattern = r'roomSrcBaidu.*bd1\"'
+    screenshotResult = re.findall(screenshotPattern, response.text, re.I)
+    screenshotResult = screenshotResult[0].replace('roomSrcBaidu\":\"','').replace('\"','')
     str1 = re.sub(r'eval.*;}', 'strc;}', result[0][0])
     homejs = str1 + result[0][1]
-    return homejs, real_rid
+    return homejs, real_rid, screenshotResult
 
 
 def get_sign(rid, post_v, tt, ub9):
@@ -117,7 +120,7 @@ def get_real_url(rid):
         real_url = real_url 
     else:
         real_url = '未开播'
-    return real_url
+    return real_url, result[2]
 
 def get_douyu_m3u8(url):
     room_id = urllib.parse.urlparse(url).path[1:]
@@ -125,5 +128,6 @@ def get_douyu_m3u8(url):
     return real_url
 
 real_url = get_douyu_m3u8(sys.argv[1])
-print('该直播间地址为：\n' + real_url)
+print('该直播间地址为：\n' + real_url[0])
+print('该直播间截图为：\n' + real_url[1])
 # test python3 douyu.py https://www.douyu.com/288016
